@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>엄마 생신 축하 편지</title>
+
+  <!-- Google Fonts — 손편지 느낌의 명조 (font-display: swap) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="letter">
+
+    <!-- 1. Intro (인사) — 타자기 효과, 자동 재생 -->
+    <section class="section section--intro" id="intro">
+      <h1 class="intro__text">
+        <span id="typed"></span><span class="cursor" aria-hidden="true">|</span>
+      </h1>
+      <!-- 스크롤 유도 화살표 힌트 -->
+      <div class="scroll-hint" id="scrollHint" aria-hidden="true">↓</div>
+    </section>
+
+    <!-- 2. Birthday (생신 축하) — 스크롤 등장 -->
+    <section class="section section--birthday reveal" id="birthday">
+      <p class="birthday__text" id="birthdayText"></p>
+    </section>
+
+    <!-- 3. Letter Body (편지 본문) -->
+    <!-- ▼▼▼ 편지 본문 시작 — 정의겸이 직접 작성할 부분 ▼▼▼ -->
+    <!-- content.js 의 LETTER.body 배열을 수정하세요. 여기 문단은 자동 생성됩니다. -->
+    <section class="section section--body" id="letterBody">
+      <!-- 문단(<p>)은 script.js가 LETTER.body 를 순회하며 생성합니다. -->
+    </section>
+    <!-- ▲▲▲ 편지 본문 끝 ▲▲▲ -->
+
+    <!-- 4. Sign-off (맺음말) — 스크롤 등장 -->
+    <section class="section section--signoff reveal" id="signoff">
+      <p class="signoff__text" id="signoffText"></p>
+    </section>
+
+  </main>
+
+  <!-- 순서 중요: content.js (데이터) 먼저, script.js (로직) 나중 -->
+  <script src="content.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

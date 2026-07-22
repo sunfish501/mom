@@ -1,0 +1,214 @@
+/* style.css — 엄마 생신 축하 편지 페이지
+   따뜻한 크림/세피아 톤, 모바일 우선, 순수 CSS 애니메이션. */
+
+:root {
+  /* 색상 팔레트 (디자인 스펙 4-1) */
+  --bg:            #FDF6EC; /* 배경: 따뜻한 크림/아이보리 */
+  --bg-alt:        #F7EBDA; /* 배경 보조/카드 */
+  --text:          #4A3F35; /* 본문 텍스트: 부드러운 다크 세피아 */
+  --accent:        #8C5A3C; /* 강조/제목: 따뜻한 브라운 */
+  --point:         #C96B5B; /* 포인트: 로즈/테라코타 */
+  --sub:           #A8998A; /* 서브/힌트: 흐린 세피아 */
+
+  /* 폰트 */
+  --font-serif: 'Nanum Myeongjo', 'Apple SD Gothic Neo', 'Malgun Gothic', serif;
+  --font-hand:  'Nanum Pen Script', 'Nanum Myeongjo', cursive;
+}
+
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* 가로 스크롤 절대 금지 */
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-size: 1.125rem;      /* 본문 기본 18px */
+  line-height: 1.9;         /* 넉넉한 행간 */
+  letter-spacing: 0.02em;
+  word-break: keep-all;     /* 한글 단어 단위 줄바꿈 */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 편지 컨테이너 — 중앙 정렬, 최대 폭 제한 */
+.letter {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* 각 섹션 — 세로 여백 넉넉히 */
+.section {
+  padding: 3.5rem 0;
+}
+
+.section--intro {
+  min-height: 100vh;
+  min-height: 100svh; /* 모바일 주소창 대응 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* --- Intro (인사) --- */
+.intro__text {
+  font-size: 2rem;
+  line-height: 1.4;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+/* 깜빡이는 커서 */
+.cursor {
+  display: inline-block;
+  margin-left: 0.04em;
+  color: var(--sub);
+  font-weight: 400;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* 커서 숨김 (타이핑 완료 후 script.js가 부여) */
+.cursor.is-hidden {
+  display: none;
+}
+
+/* 스크롤 힌트 화살표 */
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: var(--sub);
+  animation: bounce 1.8s ease-in-out infinite;
+  transition: opacity 0.6s ease-out;
+}
+
+.scroll-hint.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50%      { transform: translate(-50%, 10px); }
+}
+
+/* --- Birthday (생신 축하) --- */
+.section--birthday {
+  text-align: center;
+}
+
+.birthday__text {
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin: 0;
+  font-weight: 700;
+}
+
+/* --- Letter Body (편지 본문) --- */
+.section--body {
+  padding-top: 1rem;
+}
+
+.body__paragraph {
+  margin: 0 0 2.2rem;
+  font-size: 1.125rem;
+  line-height: 1.9;
+}
+
+.body__paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* 플레이스홀더 문단 표시 — 개발 중 눈에 띄게. 실제 편지로 채워지면 이 클래스는 사라짐. */
+.body__paragraph.is-placeholder {
+  color: var(--sub);
+  background: var(--bg-alt);
+  border: 1px dashed var(--point);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-style: italic;
+}
+
+/* --- Sign-off (맺음말) --- */
+.section--signoff {
+  text-align: right;
+  padding-bottom: 6rem;
+}
+
+.signoff__text {
+  font-size: 1.25rem;
+  color: var(--accent);
+  margin: 0;
+  white-space: pre-line; /* content.js의 \n 을 줄바꿈으로 */
+  line-height: 1.7;
+}
+
+/* --- 스크롤 등장 애니메이션 (fade + slide-up) --- */
+.reveal,
+.body__paragraph {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal.is-visible,
+.body__paragraph.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- 태블릿/데스크톱 보정 --- */
+@media (min-width: 768px) {
+  .letter {
+    padding: 0 2rem;
+  }
+  .intro__text {
+    font-size: 2.5rem;
+  }
+  .birthday__text {
+    font-size: 1.8rem;
+  }
+  .body__paragraph {
+    font-size: 1.2rem;
+  }
+  .signoff__text {
+    font-size: 1.4rem;
+  }
+}
+
+/* --- 모션 민감 사용자 대응: 애니메이션 제거, 즉시 표시 --- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .body__paragraph {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .cursor {
+    animation: none;
+  }
+  .scroll-hint {
+    animation: none;
+  }
+}
