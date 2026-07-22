@@ -55,7 +55,20 @@
         <div class="cosmic-body body-jupiter"  data-stage="2"><span class="cosmic-caption"></span></div>
         <div class="cosmic-body body-sun"      data-stage="3"><span class="cosmic-caption"></span></div>
         <div class="cosmic-body body-blackhole" data-stage="4"><span class="cosmic-caption"></span></div>
-        <div class="cosmic-body finale-love"   data-stage="5"><span class="cosmic-caption"></span></div>
+        <div class="cosmic-body finale-love" data-stage="5">
+          <!-- 하트: 인라인 SVG로 절차적 생성 (이미지 없음). 로즈→골드 그라디언트 + drop-shadow 글로우. -->
+          <svg class="heart" viewBox="0 0 32 29.6" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+            <defs>
+              <radialGradient id="heartGrad" cx="50%" cy="34%" r="72%">
+                <stop offset="0%"   stop-color="#E5989B"/>
+                <stop offset="68%"  stop-color="#F3D27A"/>
+                <stop offset="100%" stop-color="#E9B949"/>
+              </radialGradient>
+            </defs>
+            <path fill="url(#heartGrad)" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4 c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+          </svg>
+          <span class="cosmic-caption"></span>
+        </div>
       </div>
     </section>
 
