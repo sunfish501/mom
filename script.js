@@ -49,6 +49,7 @@
 
     if (prefersReducedMotion) {
       typedEl.textContent = text;
+      if (cursorEl) cursorEl.classList.add("is-hidden");
       return;
     }
 
