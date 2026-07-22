@@ -179,6 +179,90 @@
     observer.observe(signoff);
   }
 
+  // --- 6. Cosmic Scale 시퀀스 — 스크롤 진행률로 천체 크로스페이드 + 확대 ---
+  // 장식 파트. 순수 JS(IntersectionObserver + rAF 스로틀), 라이브러리 0.
+  // 실패해도 아래 편지 본문 가독성/기능엔 영향 없음.
+  function setupCosmic() {
+    var section = document.getElementById("cosmic");
+    if (!section) return;
+
+    var bodies = section.querySelectorAll(".cosmic-body");
+    if (!bodies.length) return;
+
+    // 캡션 채우기 (content.js LETTER.cosmic)
+    var captions = (typeof LETTER !== "undefined" && Array.isArray(LETTER.cosmic))
+      ? LETTER.cosmic : [];
+    Array.prototype.forEach.call(bodies, function (el, i) {
+      var cap = el.querySelector(".cosmic-caption");
+      if (cap && captions[i]) cap.textContent = captions[i];
+    });
+
+    var stageCount = bodies.length; // 6
+
+    // 모션 민감: 긴 스크럽 생략, 마지막 "사랑하는 마음"만 정적 표시
+    if (prefersReducedMotion) {
+      var finale = bodies[stageCount - 1];
+      if (finale) finale.classList.add("active");
+      return;
+    }
+
+    var current = -1;
+
+    function setStage(idx, local) {
+      if (idx !== current) {
+        if (current >= 0 && bodies[current]) bodies[current].classList.remove("active");
+        bodies[idx].classList.add("active");
+        current = idx;
+      }
+      // 단계 내부 진행률로 은은한 확대 (기본 크기는 vmin으로 이미 상승)
+      var scale = 0.9 + local * 0.28;
+      bodies[idx].style.setProperty("--scale", scale.toFixed(3));
+    }
+
+    function update() {
+      var rect = section.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      var span = rect.height - vh;
+      var progress = span > 0 ? (-rect.top) / span : 0;
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
+
+      var raw = progress * stageCount;
+      var idx = Math.floor(raw);
+      if (idx > stageCount - 1) idx = stageCount - 1;
+      if (idx < 0) idx = 0;
+      setStage(idx, raw - idx);
+    }
+
+    var inView = false;
+    var ticking = false;
+
+    function onScroll() {
+      if (!inView || ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        update();
+        ticking = false;
+      });
+    }
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          inView = entry.isIntersecting;
+          if (inView) update(); // 진입 시 즉시 반영
+        });
+      }, { rootMargin: "0px" });
+      io.observe(section);
+    } else {
+      inView = true; // 폴백: 항상 활성
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update(); // 초기 상태(달) 세팅
+  }
+
   // --- 초기화 ---
   function init() {
     fillStaticContent(); // 본문 문단을 먼저 생성해야 AOS/IO가 관찰 가능
@@ -186,6 +270,7 @@
     setupReveals();
     setupScrollHint();
     setupConfetti();
+    setupCosmic();
   }
 
   if (document.readyState === "loading") {

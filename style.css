@@ -26,7 +26,8 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* 가로 스크롤 절대 금지 */
+  overflow-x: hidden; /* 가로 스크롤 절대 금지 (구형 브라우저 폴백) */
+  overflow-x: clip;   /* clip은 스크롤 컨테이너를 만들지 않아 position:sticky 유지 */
 }
 
 body {
@@ -288,6 +289,150 @@ body {
 }
 
 /* ============================================================
+   2.5 Cosmic Scale — "내 마음의 크기" 시퀀스
+   풀블리드 + sticky 스테이지. 진행률(JS)이 .active 토글 & --scale 갱신.
+   전부 CSS radial-gradient + glow, 이미지 없음. opacity/transform/filter만.
+   ============================================================ */
+
+.cosmic {
+  position: relative;
+  /* 풀블리드: max-width 컨테이너 안에서 뷰포트 전체 폭으로 확장 */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  height: 540vh;               /* 6단계 × ~90vh */
+  z-index: 1;
+}
+
+.cosmic-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 천체 레이어 — 절대위치로 겹쳐 쌓기, 기본 opacity:0 (크로스페이드) */
+.cosmic-body {
+  --scale: 1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12vmin;
+  height: 12vmin;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.cosmic-body.active {
+  opacity: 1;
+  will-change: transform, opacity; /* 활성 스테이지에만 */
+}
+
+/* 캡션 — 오브젝트와 함께 페이드, 배경 대비 확보 */
+.cosmic-caption {
+  position: absolute;
+  bottom: -2.6em;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 1.15rem;
+  color: var(--text);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.04em;
+}
+
+/* 1. 달 — 회색 + 크레이터 */
+.body-moon {
+  width: 12vmin; height: 12vmin;
+  background:
+    radial-gradient(circle at 62% 55%, rgba(0,0,0,0.20) 0 5%, transparent 6%),
+    radial-gradient(circle at 42% 66%, rgba(0,0,0,0.16) 0 3.5%, transparent 4.5%),
+    radial-gradient(circle at 55% 38%, rgba(0,0,0,0.14) 0 3%, transparent 4%),
+    radial-gradient(circle at 35% 35%, #E8E8E8, #9AA0A6 60%, #6B7280);
+  box-shadow: 0 0 18px rgba(255,255,255,0.22);
+}
+
+/* 2. 지구 — 파랑/초록 + 대기 rim */
+.body-earth {
+  width: 20vmin; height: 20vmin;
+  background:
+    radial-gradient(ellipse 20% 14% at 58% 42%, #2f8f4e 0 60%, transparent 62%),
+    radial-gradient(ellipse 14% 20% at 38% 62%, #266b3a 0 60%, transparent 62%),
+    radial-gradient(circle at 40% 35%, #6FB1FC, #2E75C9 55%, #14532D);
+  box-shadow: 0 0 26px rgba(80,150,240,0.55);
+}
+
+/* 3. 목성 — 주황 줄무늬 + 대적점 */
+.body-jupiter {
+  width: 34vmin; height: 34vmin;
+  background:
+    radial-gradient(ellipse 12% 8% at 62% 60%, #B5432F 0 62%, transparent 64%),
+    repeating-linear-gradient(6deg,
+      #D8A15A 0 8%, #B5713C 8% 14%, #E8C39E 14% 20%, #C98A4C 20% 26%);
+  box-shadow: 0 0 26px rgba(216,161,90,0.45);
+}
+
+/* 4. 태양 — 강렬한 다층 glow + 은은한 맥동 */
+.body-sun {
+  width: 52vmin; height: 52vmin;
+  background: radial-gradient(circle, #FFF3B0, #FFB627 40%, #FF7A00 75%);
+  box-shadow:
+    0 0 40px 8px rgba(255,150,0,0.6),
+    0 0 90px 28px rgba(255,120,0,0.4);
+}
+.body-sun.active { animation: sunPulse 3.4s ease-in-out infinite; }
+@keyframes sunPulse {
+  0%, 100% { filter: brightness(1);    }
+  50%      { filter: brightness(1.12); }
+}
+
+/* 5. 블랙홀 — 검은 원 + 골드/보라 강착원반 + 느린 회전 */
+.body-blackhole {
+  width: 68vmin; height: 68vmin;
+  background: radial-gradient(circle,
+    #000 0 36%, #E9B949 41%, #7C3AED 50%, #E9B949 58%, rgba(124,58,237,0.35) 66%, transparent 72%);
+  box-shadow:
+    0 0 60px 8px rgba(233,185,73,0.4),
+    0 0 100px 34px rgba(124,58,237,0.35);
+}
+.body-blackhole.active { animation: spin 18s linear infinite; }
+@keyframes spin {
+  from { transform: translate(-50%, -50%) scale(var(--scale)) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) scale(var(--scale)) rotate(360deg); }
+}
+
+/* 6. 피날레 — "내가 엄마를 사랑하는 마음": 화면 초과 색면 + 최대 글로우 + 큰 텍스트 */
+.finale-love {
+  width: 120vmin; height: 120vmin;
+  background: radial-gradient(circle, #E5989B 0%, #F3D27A 70%, rgba(243,210,122,0) 100%);
+  box-shadow: 0 0 120px 40px rgba(233,185,73,0.45);
+}
+.finale-love .cosmic-caption {
+  position: static;
+  transform: none;
+  white-space: normal;
+  max-width: 84vw;
+  text-align: center;
+  font-size: 2rem;
+  line-height: 1.35;
+  font-weight: 800;
+  color: #4A2E12;               /* 밝은 로즈/골드 색면 위 고대비 */
+  text-shadow: 0 0 24px rgba(255,255,255,0.55);
+  margin-bottom: 0;
+}
+.finale-love {
+  align-items: center;          /* 피날레 텍스트는 중앙 */
+}
+
+/* ============================================================
    반응형 — 태블릿/데스크톱 보정
    ============================================================ */
 @media (min-width: 768px) {
@@ -297,6 +442,19 @@ body {
   .birthday__text { font-size: 1.8rem; }
   .body__paragraph { font-size: 1.2rem; }
   .signoff__text { font-size: 1.4rem; }
+  .finale-love .cosmic-caption { font-size: 2.6rem; }
+}
+
+/* 모바일: 스크롤 길이 축소(단계당 ~70vh) + glow 부하 완화 */
+@media (max-width: 767px) {
+  .cosmic { height: 420vh; }
+  .body-sun {
+    box-shadow: 0 0 26px 5px rgba(255,150,0,0.55), 0 0 60px 16px rgba(255,120,0,0.35);
+  }
+  .body-blackhole {
+    box-shadow: 0 0 36px 5px rgba(233,185,73,0.4), 0 0 64px 20px rgba(124,58,237,0.32);
+  }
+  .finale-love { box-shadow: 0 0 70px 24px rgba(233,185,73,0.42); }
 }
 
 /* ============================================================
@@ -317,5 +475,23 @@ body {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  /* Cosmic: 긴 sticky 시퀀스 생략 — 마지막 "사랑하는 마음"만 정적으로 표시 */
+  .cosmic { height: auto; }
+  .cosmic-stage {
+    position: static;
+    height: auto;
+    min-height: 70vh;
+    padding: 3rem 1rem;
+  }
+  .cosmic-body { animation: none !important; }
+  .cosmic-body:not(.finale-love) { display: none; }
+  .finale-love {
+    position: relative;
+    left: auto; top: auto;
+    transform: none;
+    opacity: 1;
+    margin: 0 auto;
   }
 }

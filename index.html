@@ -36,13 +36,31 @@
       <div class="scroll-hint" id="scrollHint" aria-hidden="true">↓</div>
     </section>
 
-    <!-- 편지 유리 카드: 배경은 화려하게, 편지는 유리 위에 깨끗하게 -->
+    <!-- 편지 유리 카드 (상단): 생신 축하 -->
     <div class="letter-card">
 
       <!-- 2. Birthday (생신 축하) — 스크롤 등장 + 골드 글로우 -->
       <section class="section section--birthday" id="birthday" data-aos="fade-up">
         <p class="birthday__text" id="birthdayText"></p>
       </section>
+
+    </div>
+
+    <!-- 2.5 Cosmic Scale (내 마음의 크기) — 풀블리드 sticky 스테이지.
+         장식 파트: 저사양에서 깨져도 아래 편지 본문 가독성/기능엔 영향 없게 격리. -->
+    <section class="cosmic" id="cosmic" aria-label="내 마음의 크기">
+      <div class="cosmic-stage">
+        <div class="cosmic-body body-moon"     data-stage="0"><span class="cosmic-caption"></span></div>
+        <div class="cosmic-body body-earth"    data-stage="1"><span class="cosmic-caption"></span></div>
+        <div class="cosmic-body body-jupiter"  data-stage="2"><span class="cosmic-caption"></span></div>
+        <div class="cosmic-body body-sun"      data-stage="3"><span class="cosmic-caption"></span></div>
+        <div class="cosmic-body body-blackhole" data-stage="4"><span class="cosmic-caption"></span></div>
+        <div class="cosmic-body finale-love"   data-stage="5"><span class="cosmic-caption"></span></div>
+      </div>
+    </section>
+
+    <!-- 편지 유리 카드 (하단): 편지 본문 + 맺음말 -->
+    <div class="letter-card">
 
       <!-- 3. Letter Body (편지 본문) -->
       <!-- ▼▼▼ 편지 본문 시작 — 정의겸이 직접 작성할 부분 ▼▼▼ -->
