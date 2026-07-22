@@ -10,39 +10,61 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 
+  <!-- AOS (스크롤 등장) — CDN. 로드 실패 시 script.js의 IntersectionObserver 폴백 -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <!-- 우리 스타일은 AOS 뒤에 로드해서 필요한 부분만 덮어씀 -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- 0. 배경 레이어 (전역, 고정): 그라디언트 + 순수 CSS 별빛 -->
+  <div class="backdrop" aria-hidden="true"></div>
+  <div class="stars stars--a" aria-hidden="true"></div>
+  <div class="stars stars--b" aria-hidden="true"></div>
+
   <main class="letter">
 
     <!-- 1. Intro (인사) — 타자기 효과, 자동 재생 -->
     <section class="section section--intro" id="intro">
-      <h1 class="intro__text">
-        <span id="typed"></span><span class="cursor" aria-hidden="true">|</span>
-      </h1>
+      <div class="intro__inner">
+        <h1 class="intro__text">
+          <span id="typed"></span><span class="cursor" aria-hidden="true">|</span>
+        </h1>
+      </div>
       <!-- 스크롤 유도 화살표 힌트 -->
       <div class="scroll-hint" id="scrollHint" aria-hidden="true">↓</div>
     </section>
 
-    <!-- 2. Birthday (생신 축하) — 스크롤 등장 -->
-    <section class="section section--birthday reveal" id="birthday">
-      <p class="birthday__text" id="birthdayText"></p>
-    </section>
+    <!-- 편지 유리 카드: 배경은 화려하게, 편지는 유리 위에 깨끗하게 -->
+    <div class="letter-card">
 
-    <!-- 3. Letter Body (편지 본문) -->
-    <!-- ▼▼▼ 편지 본문 시작 — 정의겸이 직접 작성할 부분 ▼▼▼ -->
-    <!-- content.js 의 LETTER.body 배열을 수정하세요. 여기 문단은 자동 생성됩니다. -->
-    <section class="section section--body" id="letterBody">
-      <!-- 문단(<p>)은 script.js가 LETTER.body 를 순회하며 생성합니다. -->
-    </section>
-    <!-- ▲▲▲ 편지 본문 끝 ▲▲▲ -->
+      <!-- 2. Birthday (생신 축하) — 스크롤 등장 + 골드 글로우 -->
+      <section class="section section--birthday" id="birthday" data-aos="fade-up">
+        <p class="birthday__text" id="birthdayText"></p>
+      </section>
 
-    <!-- 4. Sign-off (맺음말) — 스크롤 등장 -->
-    <section class="section section--signoff reveal" id="signoff">
-      <p class="signoff__text" id="signoffText"></p>
-    </section>
+      <!-- 3. Letter Body (편지 본문) -->
+      <!-- ▼▼▼ 편지 본문 시작 — 정의겸이 직접 작성할 부분 ▼▼▼ -->
+      <!-- content.js 의 LETTER.body 배열을 수정하세요. 아래 문단은 script.js가 자동 생성합니다. -->
+      <section class="section section--body" id="letterBody">
+        <!-- 문단(<p>)은 script.js가 LETTER.body 를 순회하며 생성합니다.
+             본문 텍스트엔 골드/글로우/움직임 이펙트 없음 — 등장 페이드만. -->
+      </section>
+      <!-- ▲▲▲ 편지 본문 끝 ▲▲▲ -->
 
+      <!-- 4. Sign-off (맺음말) — 스크롤 등장 → 컨페티 피날레 -->
+      <section class="section section--signoff" id="signoff" data-aos="fade-up">
+        <p class="signoff__text" id="signoffText"></p>
+      </section>
+
+    </div>
   </main>
+
+  <!-- canvas-confetti (서명부 피날레) — CDN. 없으면 조용히 생략 -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- AOS JS — CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
   <!-- 순서 중요: content.js (데이터) 먼저, script.js (로직) 나중 -->
   <script src="content.js"></script>

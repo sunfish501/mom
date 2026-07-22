@@ -1,14 +1,17 @@
-/* style.css — 엄마 생신 축하 편지 페이지
-   따뜻한 크림/세피아 톤, 모바일 우선, 순수 CSS 애니메이션. */
+/* style.css — 엄마 생신 축하 편지 (Deluxe Edition)
+   밤하늘 그라디언트 + 순수 CSS 별빛 + 글래스모피즘 카드.
+   원칙: 배경은 화려하게, 편지 텍스트는 유리 위에 깨끗하고 정적으로. */
 
 :root {
   /* 색상 팔레트 (디자인 스펙 4-1) */
-  --bg:            #FDF6EC; /* 배경: 따뜻한 크림/아이보리 */
-  --bg-alt:        #F7EBDA; /* 배경 보조/카드 */
-  --text:          #4A3F35; /* 본문 텍스트: 부드러운 다크 세피아 */
-  --accent:        #8C5A3C; /* 강조/제목: 따뜻한 브라운 */
-  --point:         #C96B5B; /* 포인트: 로즈/테라코타 */
-  --sub:           #A8998A; /* 서브/힌트: 흐린 세피아 */
+  --bg-1:      #0F0C29; /* 그라디언트 시작: 딥 네이비/미드나잇 */
+  --bg-2:      #2D1B4E; /* 그라디언트 중간: 딥 퍼플 */
+  --bg-3:      #3B2063; /* 그라디언트 끝: 플럼/자수정 */
+  --text:      #F5EFE6; /* 본문: 따뜻한 아이보리 (딥 배경 위 고대비) */
+  --gold-soft: #F3D27A; /* 강조/제목: 소프트 골드 */
+  --gold:      #E9B949; /* 포인트/글로우: 진한 골드 (커서, 컨페티) */
+  --sub:       #B9A8D0; /* 서브/힌트: 흐린 라벤더 */
+  --rose:      #E5989B; /* 로즈 포인트 (컨페티 보조) */
 
   /* 폰트 */
   --font-serif: 'Nanum Myeongjo', 'Apple SD Gothic Neo', 'Malgun Gothic', serif;
@@ -27,7 +30,7 @@ html, body {
 }
 
 body {
-  background: var(--bg);
+  background: var(--bg-1); /* 배경 레이어 로드 전/실패 시 폴백 단색 */
   color: var(--text);
   font-family: var(--font-serif);
   font-size: 1.125rem;      /* 본문 기본 18px */
@@ -37,18 +40,84 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 편지 컨테이너 — 중앙 정렬, 최대 폭 제한 */
+/* ============================================================
+   0. 배경 레이어 (고정) — 그라디언트 + 별빛
+   ============================================================ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
+  background-size: 200% 200%;
+  animation: bgShift 45s ease-in-out infinite;
+}
+
+@keyframes bgShift {
+  0%,  100% { background-position: 0% 0%; }
+  50%       { background-position: 100% 100%; }
+}
+
+/* 순수 CSS 별빛: radial-gradient 점들을 흩뿌리고 opacity 트윙클.
+   라이브러리 0개 — 저사양 폰에서도 안전. (tsParticles 대신 채택) */
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+.stars--a {
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 27% 62%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 43% 33%, #ffffff 50%, transparent 51%),
+    radial-gradient(2px   2px   at 58% 78%, var(--gold-soft) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 71% 22%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 84% 55%, #ffffff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 91% 84%, #ffffff 50%, transparent 51%),
+    radial-gradient(2px   2px   at 34% 88%, var(--gold-soft) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 6%  72%, #ffffff 50%, transparent 51%);
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+.stars--b {
+  background-image:
+    radial-gradient(1px 1px at 19% 41%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 38% 12%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 49%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 63% 8%,  #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 77% 67%, var(--gold) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 31%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 47% 72%, #ffffff 50%, transparent 51%),
+    radial-gradient(1px 1px at 9%  47%, #ffffff 50%, transparent 51%);
+  opacity: 0.7;
+  animation: twinkle 6.5s ease-in-out infinite 1.2s;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.9; }
+}
+
+/* ============================================================
+   레이아웃
+   ============================================================ */
+
 .letter {
+  position: relative;
+  z-index: 1;
   max-width: 640px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 1.25rem 4rem;
 }
 
-/* 각 섹션 — 세로 여백 넉넉히 */
 .section {
-  padding: 3.5rem 0;
+  padding: 3rem 0;
 }
 
+/* --- Intro (인사) — 풀스크린 히어로 --- */
 .section--intro {
   min-height: 100vh;
   min-height: 100svh; /* 모바일 주소창 대응 */
@@ -62,21 +131,30 @@ body {
   padding-bottom: 0;
 }
 
-/* --- Intro (인사) --- */
+.intro__inner {
+  animation: floatUp 1.2s ease-out both; /* 로드 시 카드가 살짝 떠오름 */
+}
+
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .intro__text {
   font-size: 2rem;
   line-height: 1.4;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--text);
   margin: 0;
   letter-spacing: 0.03em;
+  text-shadow: 0 0 18px rgba(233, 185, 73, 0.25); /* 은은한 골드 헤일로 */
 }
 
-/* 깜빡이는 커서 */
+/* 깜빡이는 골드 커서 */
 .cursor {
   display: inline-block;
   margin-left: 0.04em;
-  color: var(--sub);
+  color: var(--gold);
   font-weight: 400;
   animation: blink 1s step-end infinite;
 }
@@ -86,10 +164,7 @@ body {
   50%      { opacity: 0; }
 }
 
-/* 커서 숨김 (타이핑 완료 후 script.js가 부여) */
-.cursor.is-hidden {
-  display: none;
-}
+.cursor.is-hidden { display: none; }
 
 /* 스크롤 힌트 화살표 */
 .scroll-hint {
@@ -113,19 +188,52 @@ body {
   50%      { transform: translate(-50%, 10px); }
 }
 
-/* --- Birthday (생신 축하) --- */
+/* ============================================================
+   글래스모피즘 편지 카드
+   ============================================================ */
+
+.letter-card {
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.38);
+  padding: 1rem 1.5rem 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* backdrop-filter 미지원 브라우저 폴백: 불투명 배경으로 가독성 확보 */
+@supports not ((-webkit-backdrop-filter: blur(14px)) or (backdrop-filter: blur(14px))) {
+  .letter-card {
+    background: rgba(30, 20, 50, 0.78);
+  }
+}
+
+/* --- Birthday (생신 축하) — 골드 글로우 --- */
 .section--birthday {
   text-align: center;
 }
 
 .birthday__text {
   font-size: 1.5rem;
-  color: var(--accent);
+  color: var(--gold-soft);
   margin: 0;
   font-weight: 700;
+  text-shadow: 0 0 10px rgba(243, 210, 122, 0.35);
 }
 
-/* --- Letter Body (편지 본문) --- */
+/* 등장 시 은은한 글로우 펄스 (2회 후 정지) — 과하지 않게 */
+[data-aos].aos-animate .birthday__text {
+  animation: glowPulse 2.4s ease-in-out 2;
+}
+
+@keyframes glowPulse {
+  0%, 100% { text-shadow: 0 0 10px rgba(243, 210, 122, 0.30); }
+  50%      { text-shadow: 0 0 22px rgba(243, 210, 122, 0.65); }
+}
+
+/* --- Letter Body (편지 본문) — 깨끗한 정적 텍스트 --- */
 .section--body {
   padding-top: 1rem;
 }
@@ -134,17 +242,16 @@ body {
   margin: 0 0 2.2rem;
   font-size: 1.125rem;
   line-height: 1.9;
+  color: var(--text); /* 아이보리 고대비 — 글래스 위에서도 선명 */
 }
 
-.body__paragraph:last-child {
-  margin-bottom: 0;
-}
+.body__paragraph:last-child { margin-bottom: 0; }
 
-/* 플레이스홀더 문단 표시 — 개발 중 눈에 띄게. 실제 편지로 채워지면 이 클래스는 사라짐. */
+/* 플레이스홀더 문단 — 개발 중 눈에 띄게. 실제 편지로 채워지면 클래스 사라짐. */
 .body__paragraph.is-placeholder {
   color: var(--sub);
-  background: var(--bg-alt);
-  border: 1px dashed var(--point);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px dashed var(--gold);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   font-style: italic;
@@ -153,62 +260,62 @@ body {
 /* --- Sign-off (맺음말) --- */
 .section--signoff {
   text-align: right;
-  padding-bottom: 6rem;
+  padding-bottom: 1rem;
 }
 
 .signoff__text {
   font-size: 1.25rem;
-  color: var(--accent);
+  color: var(--gold-soft);
   margin: 0;
   white-space: pre-line; /* content.js의 \n 을 줄바꿈으로 */
   line-height: 1.7;
+  text-shadow: 0 0 10px rgba(243, 210, 122, 0.30);
 }
 
-/* --- 스크롤 등장 애니메이션 (fade + slide-up) --- */
-.reveal,
-.body__paragraph {
+/* ============================================================
+   스크롤 등장 폴백 (AOS 미로드 시 script.js가 aos-animate 부여)
+   AOS CSS가 로드됐으면 AOS 규칙 사용, 아니면 아래 규칙이 구동.
+   ============================================================ */
+[data-aos="fade-up"] {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
-.reveal.is-visible,
-.body__paragraph.is-visible {
+[data-aos="fade-up"].aos-animate {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* --- 태블릿/데스크톱 보정 --- */
+/* ============================================================
+   반응형 — 태블릿/데스크톱 보정
+   ============================================================ */
 @media (min-width: 768px) {
-  .letter {
-    padding: 0 2rem;
-  }
-  .intro__text {
-    font-size: 2.5rem;
-  }
-  .birthday__text {
-    font-size: 1.8rem;
-  }
-  .body__paragraph {
-    font-size: 1.2rem;
-  }
-  .signoff__text {
-    font-size: 1.4rem;
-  }
+  .letter { padding: 0 2rem 5rem; }
+  .letter-card { padding: 1.5rem 2.5rem 3rem; }
+  .intro__text  { font-size: 2.5rem; }
+  .birthday__text { font-size: 1.8rem; }
+  .body__paragraph { font-size: 1.2rem; }
+  .signoff__text { font-size: 1.4rem; }
 }
 
-/* --- 모션 민감 사용자 대응: 애니메이션 제거, 즉시 표시 --- */
+/* ============================================================
+   모션 민감 사용자: 모든 애니메이션 정지, 즉시/정적 표시
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .body__paragraph {
+  .backdrop,
+  .stars--a,
+  .stars--b,
+  .intro__inner,
+  .cursor,
+  .scroll-hint,
+  [data-aos].aos-animate .birthday__text {
+    animation: none !important;
+  }
+  .stars--a, .stars--b { opacity: 0.6; }
+  [data-aos="fade-up"] {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-  .cursor {
-    animation: none;
-  }
-  .scroll-hint {
-    animation: none;
   }
 }
