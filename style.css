@@ -433,6 +433,8 @@ body {
 
 .finale-love .cosmic-caption {
   position: relative;           /* 하트 위에 얹기 */
+  left: auto;                   /* 기본 .cosmic-caption의 left:50%를 상쇄 (relative에서도 적용돼 우측으로 밀리던 버그) */
+  bottom: auto;                 /* 기본 .cosmic-caption의 bottom:-2.6em을 상쇄 */
   z-index: 2;
   transform: translateY(-6vmin); /* 하트의 넓고 solid한 중상단부로 */
   white-space: normal;
@@ -450,6 +452,80 @@ body {
 }
 
 /* ============================================================
+   편지 봉투 — sticky 스테이지. 편지(유리 카드)는 안 움직이고
+   봉투(플랩+포켓)만 스크롤 진행률에 따라 벗겨져 사라짐.
+   ============================================================ */
+
+.envelope {
+  position: relative;
+  height: 220vh;              /* 100vh 고정 + 120vh 만큼 벗겨지는 애니메이션 */
+  margin-top: 4rem;           /* 편지를 한 템포 더 아래로 */
+  z-index: 1;
+}
+
+.envelope-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1600px;        /* 플랩이 뒤로 열리는 3D 느낌 */
+}
+
+.envelope-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  padding: 0 1.25rem;
+}
+
+/* 편지 카드 — 봉투 밑에서 항상 이 자리, 스크롤에도 안 움직임 */
+.envelope-wrap .letter-card {
+  margin-bottom: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* 봉투 오버레이 — 편지 카드 위에 정확히 겹침 */
+.envelope-front {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+  pointer-events: none; /* 장식: 클릭 방해 안 함 */
+}
+
+/* 포켓(봉투 몸통) — 편지를 통째로 가리다가 아래로 미끄러지며 페이드아웃 */
+.envelope-pocket {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(165deg, #EFE1C4 0%, #DCC194 55%, #C7A579 100%);
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.38);
+  transform-origin: bottom center;
+}
+
+/* 플랩(봉투 뚜껑) — 위쪽 삼각형, 위 모서리를 축으로 뒤로 열림 */
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46%;
+  background: linear-gradient(165deg, #F4E8CE 0%, #E2CA9E 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  backface-visibility: hidden; /* 뒤로 넘어가면 자연스럽게 사라짐 */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+}
+
+/* prefers-reduced-motion: 스크럽 생략 — script.js가 .envelope-front를 즉시 숨김(display:none) */
+
+/* ============================================================
    반응형 — 태블릿/데스크톱 보정
    ============================================================ */
 @media (min-width: 768px) {
@@ -465,6 +541,7 @@ body {
 /* 모바일: 스크롤 길이 축소(단계당 ~70vh) + glow 부하 완화 */
 @media (max-width: 767px) {
   .cosmic { height: 420vh; }
+  .envelope { height: 180vh; margin-top: 2.5rem; }
   .body-sun {
     box-shadow: 0 0 26px 5px rgba(255,150,0,0.55), 0 0 60px 16px rgba(255,120,0,0.35);
   }
@@ -511,4 +588,9 @@ body {
     opacity: 1;
     margin: 0 auto;
   }
+
+  /* 봉투: 긴 sticky 스크럽 생략 — script.js가 .envelope-front를 즉시 숨겨
+     편지가 처음부터 바로 보이게 함(정적 표시, 가독성 우선) */
+  .envelope { height: auto; margin-top: 2rem; }
+  .envelope-stage { position: static; height: auto; perspective: none; }
 }

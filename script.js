@@ -263,6 +263,74 @@
     update(); // 초기 상태(달) 세팅
   }
 
+  // --- 7. 편지 봉투 — 스크롤 진행률로 플랩/포켓이 벗겨져 사라짐 ---
+  // 편지 카드는 sticky 스테이지 안에서 화면 위치가 안 움직임(장식 오버레이만 애니메이션).
+  // 장식 파트. 실패해도 편지 본문 가독성/기능엔 영향 없음(오버레이가 안 보일 뿐).
+  function setupEnvelope() {
+    var section = document.getElementById("envelope");
+    if (!section) return;
+
+    var front = document.getElementById("envelopeFront");
+    var flap = section.querySelector(".envelope-flap");
+    var pocket = section.querySelector(".envelope-pocket");
+    if (!front || !flap || !pocket) return;
+
+    // 모션 민감: 긴 스크럽 생략 — 편지가 처음부터 바로 보이게 오버레이 제거
+    if (prefersReducedMotion) {
+      front.style.display = "none";
+      return;
+    }
+
+    function update() {
+      var rect = section.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      var span = rect.height - vh;
+      var progress = span > 0 ? (-rect.top) / span : 0;
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
+
+      // 0 ~ 0.55: 플랩이 위 모서리를 축으로 뒤로 열림
+      var flapProgress = Math.min(progress / 0.55, 1);
+      flap.style.transform = "rotateX(" + (-165 * flapProgress) + "deg)";
+
+      // 0.35 ~ 1: 포켓이 아래로 미끄러지며 페이드아웃 (플랩 열림과 겹쳐 자연스럽게)
+      var pocketProgress = Math.max(0, Math.min((progress - 0.35) / 0.65, 1));
+      pocket.style.transform = "translateY(" + (pocketProgress * 130) + "%)";
+      pocket.style.opacity = String(1 - pocketProgress);
+
+      // 완전히 열리면 오버레이 자체를 치워 클릭/터치 방해 없게
+      front.style.opacity = progress >= 0.99 ? "0" : "1";
+    }
+
+    var inView = false;
+    var ticking = false;
+
+    function onScroll() {
+      if (!inView || ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        update();
+        ticking = false;
+      });
+    }
+
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          inView = entry.isIntersecting;
+          if (inView) update();
+        });
+      }, { rootMargin: "0px" });
+      io.observe(section);
+    } else {
+      inView = true; // 폴백: 항상 활성
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update(); // 초기 상태(봉투 닫힘) 세팅
+  }
+
   // --- 초기화 ---
   function init() {
     fillStaticContent(); // 본문 문단을 먼저 생성해야 AOS/IO가 관찰 가능
@@ -271,6 +339,7 @@
     setupScrollHint();
     setupConfetti();
     setupCosmic();
+    setupEnvelope();
   }
 
   if (document.readyState === "loading") {

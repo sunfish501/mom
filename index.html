@@ -72,24 +72,41 @@
       </div>
     </section>
 
-    <!-- 편지 유리 카드 (하단): 편지 본문 + 맺음말 -->
-    <div class="letter-card">
+    <!-- 편지 봉투 섹션: 풀블리드 sticky 스테이지.
+         편지(유리 카드)는 화면에서 안 움직이고, 봉투(플랩+포켓)만 스크롤에 따라 벗겨지며 사라짐.
+         장식 파트: 실패해도 봉투가 그냥 안 보일 뿐 편지 본문은 항상 읽을 수 있음(격리). -->
+    <section class="envelope" id="envelope">
+      <div class="envelope-stage">
+        <div class="envelope-wrap">
 
-      <!-- 3. Letter Body (편지 본문) -->
-      <!-- ▼▼▼ 편지 본문 시작 — 정의겸이 직접 작성할 부분 ▼▼▼ -->
-      <!-- content.js 의 LETTER.body 배열을 수정하세요. 아래 문단은 script.js가 자동 생성합니다. -->
-      <section class="section section--body" id="letterBody">
-        <!-- 문단(<p>)은 script.js가 LETTER.body 를 순회하며 생성합니다.
-             본문 텍스트엔 골드/글로우/움직임 이펙트 없음 — 등장 페이드만. -->
-      </section>
-      <!-- ▲▲▲ 편지 본문 끝 ▲▲▲ -->
+          <!-- 편지 유리 카드 (하단): 편지 본문 + 맺음말 — 봉투 밑에서 고정, 위치 안 움직임 -->
+          <div class="letter-card">
 
-      <!-- 4. Sign-off (맺음말) — 스크롤 등장 → 컨페티 피날레 -->
-      <section class="section section--signoff" id="signoff" data-aos="fade-up">
-        <p class="signoff__text" id="signoffText"></p>
-      </section>
+            <!-- 3. Letter Body (편지 본문) -->
+            <!-- ▼▼▼ 편지 본문 시작 — 정의겸이 직접 작성할 부분 ▼▼▼ -->
+            <!-- content.js 의 LETTER.body 배열을 수정하세요. 아래 문단은 script.js가 자동 생성합니다. -->
+            <section class="section section--body" id="letterBody">
+              <!-- 문단(<p>)은 script.js가 LETTER.body 를 순회하며 생성합니다.
+                   본문 텍스트엔 골드/글로우/움직임 이펙트 없음 — 등장 페이드만. -->
+            </section>
+            <!-- ▲▲▲ 편지 본문 끝 ▲▲▲ -->
 
-    </div>
+            <!-- 4. Sign-off (맺음말) — 스크롤 등장 → 컨페티 피날레 -->
+            <section class="section section--signoff" id="signoff" data-aos="fade-up">
+              <p class="signoff__text" id="signoffText"></p>
+            </section>
+
+          </div>
+
+          <!-- 봉투 오버레이: 플랩(위)이 뒤로 열리고, 포켓(전체)이 아래로 벗겨지며 사라짐 -->
+          <div class="envelope-front" id="envelopeFront" aria-hidden="true">
+            <div class="envelope-pocket"></div>
+            <div class="envelope-flap"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- canvas-confetti (서명부 피날레) — CDN. 없으면 조용히 생략 -->
