@@ -434,12 +434,15 @@ body {
 .finale-love .cosmic-caption {
   position: relative;           /* 하트 위에 얹기 */
   z-index: 2;
-  transform: none;
+  transform: translateY(-6vmin); /* 하트의 넓고 solid한 중상단부로 */
   white-space: normal;
-  max-width: 84vw;
+  word-break: keep-all;         /* 한글 단어 단위 줄바꿈 → 자연스러운 2줄 */
+  /* 폭/크기를 하트(120vmin) 안쪽 여백에 맞춰 vmin으로 묶음 →
+     데스크톱·모바일·reduced-motion 어디서든 하트 밖으로 안 나감 */
+  max-width: 56vmin;
   text-align: center;
-  font-size: 2rem;
-  line-height: 1.35;
+  font-size: 4.4vmin;
+  line-height: 1.4;
   font-weight: 800;
   color: #4A2E12;               /* 로즈/골드 하트 위 고대비 */
   text-shadow: 0 0 24px rgba(255,255,255,0.6);
@@ -456,7 +459,7 @@ body {
   .birthday__text { font-size: 1.8rem; }
   .body__paragraph { font-size: 1.2rem; }
   .signoff__text { font-size: 1.4rem; }
-  .finale-love .cosmic-caption { font-size: 2.6rem; }
+  /* 피날레 캡션은 vmin으로 하트에 비례 고정 — 여기서 rem 오버라이드하지 않음 */
 }
 
 /* 모바일: 스크롤 길이 축소(단계당 ~70vh) + glow 부하 완화 */
